@@ -56,7 +56,7 @@ def classification_get_input_shape(dataset):
     elif dataset == 'mnist':
         return 1, 1, 28, 28
     elif dataset == 'sod':
-        return 1, 1, 352, 352
+        return 1, 3, 352, 352
     else:
         raise ValueError("dataset %s is not supported" % dataset)
 
