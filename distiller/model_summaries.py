@@ -128,7 +128,7 @@ def weights_sparsity_tbl_summary(model, return_total_sparsity=False, param_dims=
     df, total_sparsity = weights_sparsity_summary(model, return_total_sparsity=True, param_dims=param_dims)
     t = tabulate(df, headers='keys', tablefmt='psql', floatfmt=".5f")
     if return_total_sparsity:
-        return t, total_sparsity
+        return t, total_sparsity, df
     return t
 
 
@@ -372,7 +372,7 @@ def create_png(sgraph, display_param_nodes=False, rankdir='TB', styles=None):
         if op['type'] == 'Conv':
             return ["sh={}".format(distiller.size2str(op['attrs']['kernel_shape'])),
                     "g={}".format(str(op['attrs']['group']))]
-        return ''   
+        return ''
 
     op_nodes = [op['name'] for op in sgraph.ops.values()]
     data_nodes = []
