@@ -81,8 +81,8 @@ def perform_sensitivity_analysis(model, net_params, sparsities, test_func, group
         sensitivity = OrderedDict()
         for s, sparsity_level in enumerate(sparsities):
             sparsity_level = float(sparsity_level)
-            print('Parameter [{:03d}/{:03d}] {}, Sparsity [{:03d}/{:03d}] {:03d}}'.
-                  format(p, len(net_params), param_name, s, len(sparsities), sparsity_level*100))
+            print('[{:03d}/{:03d}] Parameter: {}, [{:03d}/{:03d}] Sparsity: {}%'.
+                  format(p, len(net_params), param_name, s, len(sparsities), int(sparsity_level*100)))
             # Create the pruner (a level pruner), the pruning policy and the
             # pruning schedule.
             if group == 'element':
