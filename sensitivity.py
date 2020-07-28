@@ -70,7 +70,7 @@ def perform_sensitivity_analysis(model, net_params, sparsities, test_func, group
         raise ValueError("group parameter contains an illegal value: {}".format(group))
     sensitivities = OrderedDict()
 
-    for param_name in net_params:
+    for p, param_name in enumerate(net_params):
         if model.state_dict()[param_name].dim() not in [2,4]:
             continue
 
@@ -79,9 +79,10 @@ def perform_sensitivity_analysis(model, net_params, sparsities, test_func, group
         model_cpy = deepcopy(model)
 
         sensitivity = OrderedDict()
-        for sparsity_level in sparsities:
+        for s, sparsity_level in enumerate(sparsities):
             sparsity_level = float(sparsity_level)
-            msglogger.info("Testing sensitivity of %s [%0.1f%% sparsity]" % (param_name, sparsity_level*100))
+            print('Parameter [{:03d}/{:03d}] {}, Sparsity [{:03d}/{:03d}] {:03d}}'.
+                  format(p, len(net_params), param_name, s, len(sparsities), sparsity_level*100))
             # Create the pruner (a level pruner), the pruning policy and the
             # pruning schedule.
             if group == 'element':
