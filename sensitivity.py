@@ -82,7 +82,7 @@ def perform_sensitivity_analysis(model, net_params, sparsities, test_func, group
         for s, sparsity_level in enumerate(sparsities):
             sparsity_level = float(sparsity_level)
             print('[{:03d}/{:03d}] Parameter: {}, [{:03d}/{:03d}] Sparsity: {}%'.
-                  format(p, len(net_params), param_name, s, len(sparsities), int(sparsity_level*100)))
+                  format(p+1, len(net_params), param_name, s+1, len(sparsities), int(sparsity_level*100)))
             # Create the pruner (a level pruner), the pruning policy and the
             # pruning schedule.
             if group == 'element':
@@ -138,17 +138,18 @@ def sensitivities_to_png(sensitivities, fname):
               "Skipping the PNG file generation")
         return
 
-    msglogger.info("Generating sensitivity graph")
+    print('Generating sensitivity graph')
 
+    plt.figure(dpi=200)
     for param_name, sensitivity in sensitivities.items():
         sense = [values[1] for sparsity, values in sensitivity.items()]
         sparsities = [sparsity for sparsity, values in sensitivity.items()]
         plt.plot(sparsities, sense, label=param_name)
 
-    plt.ylabel('top5')
-    plt.xlabel('sparsity')
+    plt.ylabel('MAE')
+    plt.xlabel('Sparsity')
     plt.title('Pruning Sensitivity')
-    plt.legend(loc='lower center',
+    plt.legend(loc='top center',
                ncol=2, mode="expand", borderaxespad=0.)
     plt.savefig(fname, format='png')
 
@@ -162,7 +163,7 @@ def sensitivities_to_csv(sensitivities, fname):
     with open(fname, 'w') as csv_file:
         writer = csv.writer(csv_file)
         # write the header
-        writer.writerow(['parameter', 'sparsity', 'top1', 'top5', 'loss'])
+        writer.writerow(['parameter', 'sparsity', 'top1', 'MAE', 'loss'])
         for param_name, sensitivity in sensitivities.items():
             for sparsity, values in sensitivity.items():
                 writer.writerow([param_name] + [sparsity] + list(values))
