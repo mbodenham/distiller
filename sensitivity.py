@@ -35,6 +35,9 @@ import csv
 import distiller
 from .scheduler import CompressionScheduler
 
+from matplotlib.pyplot import cm
+import numpy as np
+
 msglogger = logging.getLogger()
 
 
@@ -77,12 +80,11 @@ def perform_sensitivity_analysis(model, net_params, sparsities, test_func, group
         # Make a copy of the model, because when we apply the zeros mask (i.e.
         # perform pruning), the model's weights are altered
         model_cpy = deepcopy(model)
-
+        print('[{:03d}/{:03d}] Parameter: {}'.format(p+1, len(net_params), param_name))
         sensitivity = OrderedDict()
         for s, sparsity_level in enumerate(sparsities):
             sparsity_level = float(sparsity_level)
-            print('[{:03d}/{:03d}] Parameter: {}, [{:03d}/{:03d}] Sparsity: {}%'.
-                  format(p+1, len(net_params), param_name, s+1, len(sparsities), int(sparsity_level*100)))
+            print('\t - [{:03d}/{:03d}] Sparsity: {}%'.format(s+1, len(sparsities), int(sparsity_level*100)))
             # Create the pruner (a level pruner), the pruning policy and the
             # pruning schedule.
             if group == 'element':
@@ -140,17 +142,18 @@ def sensitivities_to_png(sensitivities, fname):
 
     print('Generating sensitivity graph')
 
-    plt.figure(dpi=200)
-    for param_name, sensitivity in sensitivities.items():
+    plt.figure(dpi=200, figsize=(10,10))
+    colours=cm.rainbow(np.linspace(0,1,len(sensitivities.items())))
+    for (param_name, sensitivity), c in zip(sensitivities.items(), colours):
         sense = [values[1] for sparsity, values in sensitivity.items()]
         sparsities = [sparsity for sparsity, values in sensitivity.items()]
-        plt.plot(sparsities, sense, label=param_name)
+        plt.plot(sparsities, sense, label=param_name, c=c)
 
     plt.ylabel('MAE')
     plt.xlabel('Sparsity')
     plt.title('Pruning Sensitivity')
-    plt.legend(loc='top center',
-               ncol=2, mode="expand", borderaxespad=0.)
+    plt.legend(loc='upper center',
+               ncol=3, mode="expand", borderaxespad=0.)
     plt.savefig(fname, format='png')
 
 
