@@ -166,7 +166,7 @@ def sensitivities_to_csv(sensitivities, fname):
     with open(fname, 'w') as csv_file:
         writer = csv.writer(csv_file)
         # write the header
-        writer.writerow(['parameter', 'sparsity', 'top1', 'MAE', 'loss'])
+        writer.writerow(['parameter', 'sparsity', 'mae', 's-measure', 'loss'])
         for param_name, sensitivity in sensitivities.items():
             for sparsity, values in sensitivity.items():
                 writer.writerow([param_name] + [sparsity] + list(values))
